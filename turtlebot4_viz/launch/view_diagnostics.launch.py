@@ -11,12 +11,13 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# 
+#
 # @author Roni Kreinin (rkreinin@clearpathrobotics.com)
 
-
 from launch import LaunchDescription
+
 from launch_ros.actions import Node
+
 
 def generate_launch_description():
 

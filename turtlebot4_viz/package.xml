@@ -14,6 +14,7 @@
 
   <depend>rviz2</depend>
   <depend>rqt_robot_monitor</depend>
+  <depend>turtlebot4_description</depend>
 
   <export>
     <build_type>ament_cmake</build_type>

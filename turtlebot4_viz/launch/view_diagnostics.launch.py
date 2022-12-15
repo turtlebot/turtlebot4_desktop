@@ -15,17 +15,33 @@
 # @author Roni Kreinin (rkreinin@clearpathrobotics.com)
 
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, GroupAction
+from launch.substitutions import LaunchConfiguration
 
-from launch_ros.actions import Node
+from launch_ros.actions import Node, PushRosNamespace
+
+
+ARGUMENTS = [
+    DeclareLaunchArgument(
+        'namespace',
+        default_value='',
+        description='Robot namespace'
+    ),
+]
 
 
 def generate_launch_description():
+    namespace = LaunchConfiguration('namespace')
 
-    robot_monitor = Node(
-        package='rqt_robot_monitor',
-        executable='rqt_robot_monitor',
-        output='screen')
+    robot_monitor = GroupAction([
+        PushRosNamespace(namespace),
 
-    ld = LaunchDescription()
+        Node(package='rqt_robot_monitor',
+             executable='rqt_robot_monitor',
+             output='screen',
+             remappings=[('/diagnostics_agg', 'diagnostics_agg')])
+    ])
+
+    ld = LaunchDescription(ARGUMENTS)
     ld.add_action(robot_monitor)
     return ld

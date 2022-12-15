@@ -17,12 +17,14 @@
 from ament_index_python.packages import get_package_share_directory
 
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, TimerAction
+from launch.actions import (DeclareLaunchArgument, GroupAction,
+                            IncludeLaunchDescription, TimerAction)
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 
-from launch_ros.actions import Node
+from launch_ros.actions import Node, PushRosNamespace
+
 
 ARGUMENTS = [
     DeclareLaunchArgument(
@@ -39,7 +41,12 @@ ARGUMENTS = [
         default_value='standard',
         choices=['standard', 'lite'],
         description='Turtlebot4 Model'
-    )
+    ),
+    DeclareLaunchArgument(
+        'namespace',
+        default_value='',
+        description='Robot namespace'
+    ),
 ]
 
 
@@ -54,27 +61,34 @@ def generate_launch_description():
         [pkg_turtlebot4_description, 'launch', 'robot_description.launch.py']
     )
 
-    rviz2 = Node(
-        package='rviz2',
-        executable='rviz2',
-        name='rviz2',
-        arguments=['-d', rviz2_config],
-        parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
-        output='screen')
+    namespace = LaunchConfiguration('namespace')
 
-    # Delay launch of robot description to allow Rviz2 to load first.
-    # Prevents visual bugs in the model.
-    robot_description = TimerAction(
-        period=3.0,
-        actions=[
-            IncludeLaunchDescription(
-                PythonLaunchDescriptionSource([description_launch]),
-                launch_arguments=[('model', LaunchConfiguration('model'))],
-                condition=IfCondition(LaunchConfiguration('description'))
-            )]
-    )
+    rviz = GroupAction([
+        PushRosNamespace(namespace),
+
+        Node(package='rviz2',
+             executable='rviz2',
+             name='rviz2',
+             arguments=['-d', rviz2_config],
+             parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time')}],
+             remappings=[
+                ('/tf', 'tf'),
+                ('/tf_static', 'tf_static')
+             ],
+             output='screen'),
+
+        # Delay launch of robot description to allow Rviz2 to load first.
+        # Prevents visual bugs in the model.
+        TimerAction(
+            period=3.0,
+            actions=[
+                IncludeLaunchDescription(
+                    PythonLaunchDescriptionSource([description_launch]),
+                    launch_arguments=[('model', LaunchConfiguration('model'))],
+                    condition=IfCondition(LaunchConfiguration('description'))
+                )])
+    ])
 
     ld = LaunchDescription(ARGUMENTS)
-    ld.add_action(robot_description)
-    ld.add_action(rviz2)
+    ld.add_action(rviz)
     return ld

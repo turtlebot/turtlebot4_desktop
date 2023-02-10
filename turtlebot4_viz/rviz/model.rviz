@@ -298,7 +298,7 @@ Visualization Manager:
         Filter size: 10
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: color/preview/image
+        Value: oakd/rgb/preview/image_raw
       Value: true
       Visibility:
         Grid: true

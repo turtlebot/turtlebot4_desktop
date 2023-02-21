@@ -2,6 +2,13 @@
 Changelog for package turtlebot4_viz
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* Updated camera topic
+* Namespacing
+* Updated CI to Humble
+* Contributors: Roni Kreinin
+
 0.1.0 (2022-05-03)
 ------------------
 * First Galactic release

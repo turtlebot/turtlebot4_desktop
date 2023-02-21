@@ -2,8 +2,8 @@
 Changelog for package turtlebot4_viz
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+1.0.0 (2023-02-21)
+------------------
 * Updated camera topic
 * Namespacing
 * Updated CI to Humble
